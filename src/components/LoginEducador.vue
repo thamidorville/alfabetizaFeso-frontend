@@ -27,16 +27,23 @@
   <form @submit.prevent="onLogin" class="container-login">
     <h2>Login de Educador</h2>
 
-    <el-input v-model="email" placeholder="Email"/>
+    <el-input v-model="email" placeholder="Email" />
     <el-input v-model="password" type="password" show-password placeholder="Senha" />
-    <button type="submit" class="btn btn-primary" :disabled="loading">Entrar</button>
-    <span v-if="loading">Validando...</span>
-  </FORM>
+    <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-top:8px">
+      <button type="submit" class="btn btn-primary" :disabled="loading">Entrar</button>
+      <span v-if="loading">Validando...</span>
+    </div>
+
+    <div v-if="error" class="form-error" style="color:red;margin-top:8px;text-align:center">{{ error }}</div>
+  </form>
 </template>
   
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { LoginEducador as loginService } from '../services/educadorService'
 
+const router = useRouter()
 const email = ref('')
 const password = ref('')
 const loading = ref(false)
@@ -46,11 +53,19 @@ async function onLogin() {
   error.value = null
   loading.value = true
   try {
-    console.log(email.value)
-    loading.value = false
+    const payload = { Email: email.value, Password: password.value }
+    const res = await loginService(payload)
+    const token = res?.token || res?.data?.token
+    if (!token) {
+      throw new Error('Credenciais inválidas')
+    }
+    localStorage.setItem('token', token)
+    await router.push('/educadores')
   } catch (err) {
-    loading.value = false
+    console.error('Login error:', err)
     error.value = err?.message || String(err)
+  } finally {
+    loading.value = false
   }
 }
 </script>

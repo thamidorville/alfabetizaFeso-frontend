@@ -19,3 +19,13 @@ export async function CriarEducador(payload){
         throw err
     }
 }
+
+export async function LoginEducador(payload) {
+    try {
+        const res = await apiPost('/educador/login', payload)
+        return res
+    } catch (err) {
+        console.error('LoginEducador error:', err)
+        throw err
+    }
+}
