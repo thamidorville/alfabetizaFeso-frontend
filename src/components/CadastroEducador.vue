@@ -3,48 +3,48 @@
     <h2>Cadastro de Educador</h2>
 
     <form @submit.prevent="onSubmit">
-      <div>
+      <div class="form-group">
         <label>Nome</label>
         <input v-model="form.nome" required />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Especialidade</label>
         <input v-model="form.especialidade" required />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Email</label>
         <input type="email" v-model="form.email" required />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Telefone</label>
         <input v-model="form.telefone" required />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Descrição</label>
         <textarea v-model="form.descricao" maxlength="240"></textarea>
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Senha</label>
         <input type="password" v-model="form.password" required minlength="8" />
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Confirmar Senha</label>
         <input type="password" v-model="form.confirmPassword" required />
       </div>
 
-      <div style="margin-top:12px;">
-        <button type="submit" :disabled="loading">Cadastrar</button>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" :disabled="loading">Cadastrar</button>
         <span v-if="loading">Enviando...</span>
       </div>
 
-      <div v-if="success" style="color:green;margin-top:8px">{{ success }}</div>
-      <div v-if="error" style="color:red;margin-top:8px">{{ error }}</div>
+      <div v-if="success" class="form-success">{{ success }}</div>
+      <div v-if="error" class="form-error">{{ error }}</div>
     </form>
   </section>
 </template>
@@ -101,9 +101,54 @@ async function onSubmit() {
 </script>
 
 <style scoped>
-.cadastro { max-width:520px; margin:20px auto; }
-form > div { margin-bottom:8px; }
-label { display:block; font-weight:600; margin-bottom:4px; }
-input, textarea { width:100%; padding:6px 8px; box-sizing:border-box; }
-button { padding:8px 12px; }
+.cadastro {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
+}
+
+.cadastro h2 {
+  color: var(--color-deep-matcha);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-main);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-deep-matcha);
+  box-shadow: 0 0 0 2px rgba(107,142,107,0.2);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-success {
+  color: green;
+  margin-top: 0.5rem;
+}
+
+.form-error {
+  color: red;
+  margin-top: 0.5rem;
+}
 </style>

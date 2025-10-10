@@ -1,65 +1,78 @@
 <template>
   <div id="app">
-  
-    <header class="header">
-      <h1>AlfabetizaFeso Frontend</h1>
-      <nav>
-        <router-link to="/" class="link">Início</router-link>
-        <router-link to="/educadores" class="link">Educadores</router-link>
+    <header>
+      <h1 class="logo">AlfabetizaFeso</h1>
+      <nav class="nav-links">
+        <router-link to="/">Início</router-link>
+        <router-link to="/educadores">Educadores</router-link>
+        <router-link to="/auth">Login | Registrar</router-link>
       </nav>
     </header>
 
-    <main class="conteudo">
+    <main>
       <router-view />
     </main>
+
+    <footer>
+      © 2025 Serial3 Corporation. Todos os direitos reservados.
+    </footer>
   </div>
 </template>
 
 <script setup>
-
 </script>
 
-<style scoped>
+
+<style>
 #app {
-  font-family: Arial, Helvetica, sans-serif;
-  color: #1f2937; /* cinza escuro */
-  background-color: #f9fafb; /* cinza claro */
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.header {
-  background: #1e3a8a; /* azul escuro */
-  color: white;
-  padding: 12px 20px;
+header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 18px;
+.logo {
+  color: var(--color-deep-matcha);
+  font-weight: 700;
+  font-size: 1.5rem;
 }
 
-.header nav {
+.nav-links {
   display: flex;
-  gap: 12px;
+  gap: 1.5rem;
 }
 
-.link {
-  color: white;
-  text-decoration: none;
+.nav-links a,
+.nav-links .dark-mode-toggle {
   font-weight: 500;
+  color: var(--color-text);
+  transition: color 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
-.link:hover {
-  text-decoration: underline;
+.nav-links a:hover,
+.nav-links .dark-mode-toggle:hover {
+  color: var(--color-matcha);
 }
 
-.conteudo {
-  flex: 1;
-  padding: 20px;
+footer {
+  text-align: center;
+  padding: 1.5rem 0;
+  font-size: 0.9rem;
+  color: #777;
+  border-top: 1px solid var(--color-border);
 }
+
+
 </style>
+
+

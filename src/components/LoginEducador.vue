@@ -1,26 +1,26 @@
 <template>
-    <section class="login">
-        <h2>Login Educador</h2>
+  <section class="login">
+    <h2>Login Educador</h2>
 
-        <form @submit.prevent="onLogin">
-            <div>
-                <label>Email</label>
-                <input type="email" v-model="email" required />
-            </div>
+    <form @submit.prevent="onLogin">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" v-model="email" required />
+      </div>
 
-            <div>
-                <label>Senha</label>
-                <input type="password" v-model="password" required />
-            </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" v-model="password" required />
+      </div>
 
-            <div style="margin-top:12px;">
-                <button type="submit" :disabled="loading">Entrar</button>
-                <span v-if="loading">Validando...</span>
-            </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" :disabled="loading">Entrar</button>
+        <span v-if="loading">Validando...</span>
+      </div>
 
-            <div v-if="error" style="color:red;margin-top:8px">{{ error }}</div>
-        </form>
-    </section>
+      <div v-if="error" class="form-error">{{ error }}</div>
+    </form>
+  </section>
 </template>
 
 <script setup>
@@ -32,44 +32,60 @@ const loading = ref(false)
 const error = ref(null)
 
 async function onLogin() {
-    error.value = null
-    loading.value = true
-    try {
-
-        console.log(email.value)
-
-        loading.value = false
-
-    } catch (err) {
-        loading.value = false
-        error.value = err?.message || String(err)
-    }
+  error.value = null
+  loading.value = true
+  try {
+    console.log(email.value)
+    loading.value = false
+  } catch (err) {
+    loading.value = false
+    error.value = err?.message || String(err)
+  }
 }
 </script>
 
 <style scoped>
 .login {
-    max-width: 420px;
-    margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: left;
 }
 
-form>div {
-    margin-bottom: 8px;
+.login h2 {
+  color: var(--color-deep-matcha);
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 4px;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-input {
-    width: 100%;
-    padding: 6px 8px;
-    box-sizing: border-box;
+.form-group input {
+  padding: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: var(--font-main);
 }
 
-button {
-    padding: 8px 12px;
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-deep-matcha);
+  box-shadow: 0 0 0 2px rgba(107,142,107,0.2);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-error {
+  color: red;
+  margin-top: 0.5rem;
 }
 </style>

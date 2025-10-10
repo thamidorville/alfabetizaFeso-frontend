@@ -1,34 +1,40 @@
 <template>
-  <div class="pagina-inicial">
-    <h1>Página Inicial</h1>
-    <div class="row">
-      <div class="col">
-        <CadastroEducador />
-      </div>
-      <div class="col">
-        <LoginEducador />
-      </div>
+  <div class="pagina-inicial container text-center">
+    <h1 class="welcome-title">Bem-vindo ao AlfabetizaFeso!</h1>
+    <p class="welcome-subtitle">Aprenda, ensine e conecte-se com educadores.</p>
+
+    <div class="cta-buttons">
+      <router-link to="/auth">
+        <button class="btn btn-primary">Crie Sua Conta</button>
+      </router-link>
     </div>
 
-    <hr />
-
-    <Educadores />
   </div>
 </template>
 
 <script setup>
 import Educadores from '../components/Educadores.vue'
-import CadastroEducador from '../components/CadastroEducador.vue'
-import LoginEducador from '../components/LoginEducador.vue'
 </script>
 
 <style scoped>
-.pagina-inicial {
-  padding: 20px;
+.welcome-title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-deep-matcha);
 }
 
-.pagina-inicial h1 {
-  margin-bottom: 16px;
-  color: #1e3a8a; 
+.welcome-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: var(--color-text);
+}
+
+.cta-buttons {
+  margin-bottom: 3rem;
+}
+
+.cta-buttons .btn {
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
 }
 </style>
