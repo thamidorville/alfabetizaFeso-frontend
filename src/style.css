@@ -6,6 +6,7 @@
   --color-deep-matcha: #6b8e6b;
   --color-border: #dcdad5;
   --color-bg-container: #FCFBF8;
+  --el-color-primary: #a4c3a2;
 
   --font-main: 'Poppins', sans-serif;
 
@@ -19,6 +20,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+main {
+  padding: 2rem;
 }
 
 body {

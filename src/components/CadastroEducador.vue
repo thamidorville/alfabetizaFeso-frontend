@@ -1,52 +1,17 @@
 <template>
-  <section class="cadastro">
+  <form @submit.prevent="onSubmit" class="container-cadastro">
     <h2>Cadastro de Educador</h2>
-
-    <form @submit.prevent="onSubmit">
-      <div class="form-group">
-        <label>Nome</label>
-        <input v-model="form.nome" required />
-      </div>
-
-      <div class="form-group">
-        <label>Especialidade</label>
-        <input v-model="form.especialidade" required />
-      </div>
-
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" v-model="form.email" required />
-      </div>
-
-      <div class="form-group">
-        <label>Telefone</label>
-        <input v-model="form.telefone" required />
-      </div>
-
-      <div class="form-group">
-        <label>Descrição</label>
-        <textarea v-model="form.descricao" maxlength="240"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" v-model="form.password" required minlength="8" />
-      </div>
-
-      <div class="form-group">
-        <label>Confirmar Senha</label>
-        <input type="password" v-model="form.confirmPassword" required />
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary" :disabled="loading">Cadastrar</button>
-        <span v-if="loading">Enviando...</span>
-      </div>
-
-      <div v-if="success" class="form-success">{{ success }}</div>
-      <div v-if="error" class="form-error">{{ error }}</div>
-    </form>
-  </section>
+    <el-input v-model="form.nome" placeholder="Nome"/>
+    <el-input v-model="form.especialidade" placeholder="Especialidade" />
+    <el-input v-model="form.email" placeholder="Email"/>
+    <el-input v-model="form.telefone" placeholder="Telefone"/>
+    <el-input v-model="form.password" type="password" show-password placeholder="Senha" />
+    <el-input v-model="form.confirmPassword" type="password" show-password placeholder="Confirmar Senha" />
+    <button type="submit" class="btn btn-primary" :disabled="loading">Cadastrar</button>
+    <span v-if="loading">Enviando...</span>
+    <div v-if="success" class="form-success">{{ success }}</div>
+    <div v-if="error" class="form-error">{{ error }}</div>
+  </form>
 </template>
 
 <script setup>
@@ -101,10 +66,23 @@ async function onSubmit() {
 </script>
 
 <style scoped>
-.cadastro {
+
+.container-cadastro {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  text-align: center;
+  justify-content: center;
+  color: var(--color-deep-matcha)
+}
+
+.container-cadastro h2 {
+  padding: 1rem;
+}
+
+.cadastro {
+  display: flex;
+  flex-direction: column;
   text-align: left;
 }
 
@@ -117,26 +95,14 @@ async function onSubmit() {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 0.6rem;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-family: var(--font-main);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--color-deep-matcha);
-  box-shadow: 0 0 0 2px rgba(107,142,107,0.2);
+  text-align: center;
+  justify-content: center;
+  color: var(--color-deep-matcha)
 }
 
 .form-actions {
   display: flex;
+  flex-direction: column; 
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;

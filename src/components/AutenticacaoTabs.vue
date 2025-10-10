@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="auth-view container text-center">
     <div class="auth-container">
       <div class="auth-tabs">
@@ -20,6 +20,17 @@
       </div>
     </div>
   </div>
+</template> -->
+
+<template>
+    <el-tabs class="auth-container" stretch>
+      <el-tab-pane  label="Login">
+        <LoginEducador />
+      </el-tab-pane>
+      <el-tab-pane label="Registro">
+        <CadastroEducador />
+      </el-tab-pane>
+    </el-tabs>
 </template>
 
 <script setup>
@@ -35,7 +46,7 @@ const activeTab = ref('login')
   max-width: 450px;
   margin: 0 auto;
   background: var(--color-bg-container);
-  padding: 2rem;
+  padding: 1rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }

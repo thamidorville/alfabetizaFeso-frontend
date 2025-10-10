@@ -23,7 +23,7 @@
 </script>
 
 
-<style>
+<style scoped>
 #app {
   height: 100vh;
   display: flex;

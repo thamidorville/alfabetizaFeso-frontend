@@ -13,7 +13,6 @@
 </template>
 
 <script setup>
-import Educadores from '../components/Educadores.vue'
 </script>
 
 <style scoped>

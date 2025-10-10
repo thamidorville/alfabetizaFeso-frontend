@@ -1,6 +1,6 @@
-<template>
+<!-- <template>
   <section class="login">
-    <h2>Login Educador</h2>
+    <h2>Login de Educador</h2>
 
     <form @submit.prevent="onLogin">
       <div class="form-group">
@@ -21,8 +21,19 @@
       <div v-if="error" class="form-error">{{ error }}</div>
     </form>
   </section>
-</template>
+</template> -->
 
+<template>
+  <form @submit.prevent="onLogin" class="container-login">
+    <h2>Login de Educador</h2>
+
+    <el-input v-model="email" placeholder="Email"/>
+    <el-input v-model="password" type="password" show-password placeholder="Senha" />
+    <button type="submit" class="btn btn-primary" :disabled="loading">Entrar</button>
+    <span v-if="loading">Validando...</span>
+  </FORM>
+</template>
+  
 <script setup>
 import { ref } from 'vue'
 
@@ -45,10 +56,21 @@ async function onLogin() {
 </script>
 
 <style scoped>
-.login {
+.container-login {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  text-align: center;
+  justify-content: center;
+  color: var(--color-deep-matcha)
+}
+
+.container-login h2 {
+  padding: 1rem;
+}
+/* .login {
+  display: flex;
+  flex-direction: column;
   text-align: left;
 }
 
@@ -87,5 +109,5 @@ async function onLogin() {
 .form-error {
   color: red;
   margin-top: 0.5rem;
-}
+} */
 </style>
