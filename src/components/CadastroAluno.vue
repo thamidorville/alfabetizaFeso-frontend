@@ -4,12 +4,12 @@
       <div class="cadastro-header">
         <div class="icon-wrapper">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-            <path d="M12 14L21 9L12 4L3 9L12 14Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M3 9V16C3 16 6 19 12 19S21 16 21 16V9" stroke="currentColor" stroke-width="2"/>
+            <path d="M19 14C19 18.4183 15.4183 22 11 22C6.58172 22 3 18.4183 3 14C3 9.58172 6.58172 6 11 6" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 2L13 10L16 13L21 8V2Z" stroke="currentColor" stroke-width="2"/>
           </svg>
         </div>
-        <h1>Cadastro de Educador</h1>
-        <p>Compartilhe seu conhecimento e transforme vidas</p>
+        <h1>Cadastro de Aluno</h1>
+        <p>Comece sua jornada de aprendizado</p>
       </div>
       
       <form @submit.prevent="onSubmit" class="cadastro-form">
@@ -17,11 +17,6 @@
           <div class="form-group">
             <label>Nome completo</label>
             <el-input v-model="form.nome" placeholder="Digite seu nome completo" size="large"/>
-          </div>
-          
-          <div class="form-group">
-            <label>Especialidade</label>
-            <el-input v-model="form.especialidade" placeholder="Ex: Matemática, Português..." size="large"/>
           </div>
           
           <div class="form-group">
@@ -35,13 +30,18 @@
           </div>
           
           <div class="form-group">
+            <label>Descrição (opcional)</label>
+            <el-input v-model="form.descricao" placeholder="Conte um pouco sobre você" size="large"/>
+          </div>
+          
+          <div class="form-group">
             <label>Senha</label>
-            <el-input v-model="form.password" type="password" show-password placeholder="Mínimo 6 caracteres" size="large"/>
+            <el-input v-model="form.senha" type="password" show-password placeholder="Mínimo 6 caracteres" size="large"/>
           </div>
           
           <div class="form-group">
             <label>Confirmar senha</label>
-            <el-input v-model="form.confirmPassword" type="password" show-password placeholder="Digite a senha novamente" size="large"/>
+            <el-input v-model="form.confirmarSenha" type="password" show-password placeholder="Digite a senha novamente" size="large"/>
           </div>
         </div>
         
@@ -61,16 +61,15 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { cadastrarEducador } from '../services/usuarioService'
+import { cadastrarAluno } from '../services/usuarioService'
 
 const form = reactive({
   nome: '',
-  especialidade: '',
   email: '',
   telefone: '',
   descricao: '',
-  password: '',
-  confirmPassword: ''
+  senha: '',
+  confirmarSenha: ''
 })
 
 const loading = ref(false)
@@ -78,14 +77,10 @@ const error = ref(null)
 const success = ref(null)
 
 async function onSubmit() {
-  console.log('🚀 Iniciando cadastro de educador...')
   error.value = null
   success.value = null
 
-  console.log('📝 Dados do formulário:', form)
-
-  if (form.password !== form.confirmPassword) {
-    console.log('❌ Senhas não coincidem')
+  if (form.senha !== form.confirmarSenha) {
     error.value = 'Senhas não coincidem.'
     return
   }
@@ -93,33 +88,24 @@ async function onSubmit() {
   loading.value = true
   try {
     const payload = {
-      nome: form.nome,
-      especialidade: form.especialidade,
-      email: form.email,
-      telefone: form.telefone,
-      descricao: form.descricao,
-      senha: form.password,
-      confirmarSenha: form.confirmPassword
+      alunoCadastro: {
+        nome: form.nome,
+        email: form.email,
+        telefone: form.telefone,
+        descricao: form.descricao,
+        senha: form.senha,
+        confirmarSenha: form.confirmarSenha
+      }
     }
-    console.log('📤 Payload enviado para API:', payload)
-    
-    const res = await cadastrarEducador(payload)
-    console.log('✅ Resposta do backend:', res)
-    
+    const res = await cadastrarAluno(payload)
     success.value = 'Cadastro realizado com sucesso.'
     Object.keys(form).forEach(k => form[k] = '')
-    console.log('🎉 Cadastro concluído com sucesso!')
+    console.log('Resposta do backend:', res)
   } catch (err) {
-    console.error('❌ Erro no cadastro:', err)
-    console.error('📋 Detalhes do erro:', {
-      message: err?.message,
-      response: err?.response?.data,
-      status: err?.response?.status
-    })
-    error.value = err?.response?.data?.message || err?.message || String(err)
+    console.error(err)
+    error.value = err?.message || String(err)
   } finally {
     loading.value = false
-    console.log('🏁 Processo de cadastro finalizado')
   }
 }
 </script>
@@ -139,7 +125,7 @@ async function onSubmit() {
   border-radius: 24px;
   padding: clamp(2rem, 5vw, 3rem);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(164, 195, 162, 0.1);
+  border: 1px solid rgba(74, 124, 89, 0.1);
 }
 
 .cadastro-header {
@@ -206,26 +192,11 @@ async function onSubmit() {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-submit::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-
-.btn-submit:hover::before {
-  transform: translateX(100%);
 }
 
 .btn-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(164, 195, 162, 0.4);
+  box-shadow: 0 8px 24px rgba(74, 124, 89, 0.4);
 }
 
 .btn-submit:disabled {
@@ -271,7 +242,7 @@ async function onSubmit() {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .form-group:nth-child(n+5) {
+  .form-group:nth-child(n+4) {
     grid-column: 1 / -1;
   }
 }

@@ -25,7 +25,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { getEducadores } from '../services/educadorService'
+import { getEducadores } from '../services/usuarioService'
 
 const educadores = ref([])
 
