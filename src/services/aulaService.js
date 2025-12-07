@@ -1,21 +1,32 @@
-import { apiGet, apiPost, apiPut, apiDelete } from './api'
+import { api } from "./api";
 
-class AulaService {
-  listar(cursoId) {
-    return apiGet(`/api/curso/${cursoId}/aula`)
-  }
-
-  criar(cursoId, dados) {
-    return apiPost(`/api/curso/${cursoId}/aula`, dados)
-  }
-
-  editar(cursoId, aulaId, dados) {
-    return apiPut(`/api/curso/${cursoId}/aula/${aulaId}`, dados)
-  }
-
-  deletar(cursoId, aulaId) {
-    return apiDelete(`/api/curso/${cursoId}/aula/${aulaId}`)
-  }
+// Export individual
+export async function listarAulasDoCurso(cursoId) {
+  const res = await api.get(`/curso/${cursoId}/aula`);
+  return res.data;
 }
 
-export default new AulaService()
+export async function obterAula(cursoId, aulaId) {
+  const res = await api.get(`/curso/${cursoId}/aula/${aulaId}`);
+  return res.data;
+}
+
+export async function criarAula(cursoId, data) {
+  const res = await api.post(`/curso/${cursoId}/aula`, data);
+  return res.data;
+}
+
+export async function atualizarAula(cursoId, aulaId, data) {
+  const res = await api.put(`/curso/${cursoId}/aula/${aulaId}`, data);
+  return res.data;
+}
+
+export async function deletarAula(cursoId, aulaId) {
+  const res = await api.delete(`/curso/${cursoId}/aula/${aulaId}`);
+  return res.data;
+}
+
+export async function listarAulasPorEducador(educadorId) {
+  const res = await api.get(`/Curso/educador/${educadorId}/aulas`);
+  return res.data;
+} 

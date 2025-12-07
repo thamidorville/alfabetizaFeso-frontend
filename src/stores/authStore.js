@@ -4,21 +4,22 @@ import { loginUsuario, getUsuarioLogado } from '../services/usuarioService'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
-    token: null,
-    isAuthenticated: false
+    token: localStorage.getItem("token") || null
   }),
 
   getters: {
+    isAuthenticated: (state) => !!state.token && !!state.user,
+
     isEducador: (state) => {
       const role = state.user?.role
-      if (!role) return false
-      return role.toString().toLowerCase() === 'educador'
+      return role?.toString().trim().toLowerCase() === 'educador'
     },
+
     isAluno: (state) => {
       const role = state.user?.role
-      if (!role) return false
-      return role.toString().toLowerCase() === 'aluno'
+      return role?.toString().trim().toLowerCase() === 'aluno'
     },
+
     userName: (state) => state.user?.nome || '',
     userRole: (state) => state.user?.role || ''
   },
@@ -27,13 +28,14 @@ export const useAuthStore = defineStore('auth', {
     async login(credentials) {
       try {
         const response = await loginUsuario(credentials)
-        
+
+        // Primeiro garante persistência
+        localStorage.setItem('token', response.token)
+
+        // Depois atualiza estado
         this.token = response.token
         this.user = response.usuario
-        this.isAuthenticated = true
-        
-        localStorage.setItem('token', this.token)
-        
+
         return { success: true }
       } catch (error) {
         throw error
@@ -43,27 +45,25 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.user = null
       this.token = null
-      this.isAuthenticated = false
-      
-      // Limpar apenas token
       localStorage.removeItem('token')
     },
 
     async checkAuth() {
       const token = localStorage.getItem('token')
-      if (!token) return false
-      
+
+      if (!token) {
+        this.logout()
+        return false
+      }
+
       try {
-        // Buscar dados atuais via /me
         const userData = await getUsuarioLogado()
-        
+
         this.token = token
         this.user = userData
-        this.isAuthenticated = true
-        
+
         return true
-      } catch (error) {
-        // Token inválido, limpar
+      } catch {
         this.logout()
         return false
       }

@@ -1,12 +1,12 @@
 <template>
-  <section class="cursos">
-    <h1 class="titulo-pagina">Todos os Cursos</h1>
+  <section class="educadores">
+    <h1 class="titulo-pagina">Educadores</h1>
 
-    <div class="cards-cursos">
-      <CardCurso
-        v-for="curso in cursos"
-        :key="curso.id"
-        :curso="curso"
+    <div class="cards-educadores">
+      <CardEducador
+        v-for="educador in educadores"
+        :key="educador.id"
+        :educador="educador"
       />
     </div>
   </section>
@@ -14,26 +14,24 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import CardCurso from '../components/CardCurso.vue'
-import { listarCursos } from '../services/cursoService'
+import { getEducadores } from '../services/usuarioService'
+import CardEducador from '../components/CardEducador.vue'
 
-const cursos = ref([])
+const educadores = ref([])
 
-async function carregarCursos() {
+onMounted(async () => {
   try {
-    cursos.value = await listarCursos()
+    educadores.value = await getEducadores()
   } catch (err) {
-    console.error('Erro ao listar cursos:', err)
+    console.error('Erro ao buscar educadores:', err)
   }
-}
-
-onMounted(() => carregarCursos())
+})
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;700&display=swap');
 
-.cursos {
+.educadores {
   padding: 50px;
   font-family: 'Sora', sans-serif;
   background: var(--cor-bg);
@@ -46,10 +44,11 @@ onMounted(() => carregarCursos())
   margin-bottom: 30px;
   text-align: left;
 }
-
-.cards-cursos {
+  
+.cards-educadores {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
 }
+
 </style>

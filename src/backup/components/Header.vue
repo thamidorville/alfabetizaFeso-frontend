@@ -1,10 +1,10 @@
+3.
 <template>
   <header class="main-header">
     <div class="header-container">
       <div class="logo-section">
         <router-link to="/" class="logo-link">
           <img 
-            src="/logo.png" 
             alt="AlfabetizaFeso Logo" 
             class="logo-image"
           />
@@ -110,10 +110,10 @@ onUnmounted(() => {
   top: 0;
   z-index: 1000;
   transition: all 0.3s ease;
+  max-width: auto;
 }
 
 .header-container {
-  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
@@ -121,6 +121,7 @@ onUnmounted(() => {
   padding: 0 2rem 0 200px;
   height: 170px;
   position: relative;
+  height: 82px;
 }
 
 .logo-section {

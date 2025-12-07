@@ -1,270 +1,193 @@
 <template>
-  <div class="dashboard-aluno">
-    <header class="dashboard-header">
-      <div class="user-info">
-        <h1>Olá, {{ authStore.userName }}!</h1>
-        <span class="role-badge">Aluno</span>
-      </div>
-      <el-button @click="logout" type="danger" plain>Sair</el-button>
-    </header>
+  <section class="dashboard">
+    <h1 class="titulo">Olá, {{ usuario.nome }}</h1>
 
-    <div class="dashboard-content">
-      <div class="aulas-disponiveis-section">
-        <h2>Aulas Disponíveis</h2>
-        <div class="aulas-grid">
-          <el-card v-for="aula in aulasDisponiveis" :key="aula.id" class="aula-card" shadow="hover">
-            <div class="aula-header">
-              <h3>{{ aula.titulo }}</h3>
-              <el-tag type="success">{{ aula.status }}</el-tag>
-            </div>
-            <p class="aula-descricao">{{ aula.descricao }}</p>
-            <div class="aula-info">
-              <p><strong>Educador:</strong> {{ aula.educador }}</p>
-              <p><strong>Data:</strong> {{ formatarData(aula.dataInicio) }}</p>
-              <p><strong>Vagas:</strong> {{ aula.vagasDisponiveis }} disponíveis</p>
-            </div>
-            <div class="aula-actions">
-              <el-button type="primary" @click="inscreverSe(aula.id)">Inscrever-se</el-button>
-              <el-button type="info" plain @click="verDetalhes(aula.id)">Ver Detalhes</el-button>
-            </div>
-          </el-card>
-        </div>
+    <!-- CARDS DE ESTATÍSTICAS -->
+    <div class="cards-topo">
+      <div class="card">
+        <h3>Cursos Inscritos</h3>
+        <p>{{ cursosUnicos.length }}</p>
       </div>
 
-      <div class="minhas-inscricoes-section">
-        <h2>Minhas Inscrições</h2>
-        <div class="inscricoes-lista">
-          <el-card v-for="inscricao in minhasInscricoes" :key="inscricao.id" class="inscricao-card">
-            <div class="inscricao-header">
-              <h3>{{ inscricao.titulo }}</h3>
-              <el-tag :type="getStatusType(inscricao.status)">{{ inscricao.status }}</el-tag>
-            </div>
-            <div class="inscricao-info">
-              <p><strong>Educador:</strong> {{ inscricao.educador }}</p>
-              <p><strong>Data:</strong> {{ formatarData(inscricao.dataInicio) }}</p>
-              <p><strong>Inscrito em:</strong> {{ formatarData(inscricao.dataInscricao) }}</p>
-            </div>
-            <div class="inscricao-actions">
-              <el-button v-if="inscricao.status === 'Agendada'" size="small" type="danger" plain @click="cancelarInscricao(inscricao.id)">
-                Cancelar Inscrição
-              </el-button>
-              <el-button v-if="inscricao.status === 'Concluída'" size="small" type="info" @click="verCertificado(inscricao.id)">
-                Ver Certificado
-              </el-button>
-            </div>
-          </el-card>
-        </div>
+      <div class="card">
+        <h3>Carga Horária Assistida</h3>
+        <p>{{ cargaHorariaHoras }} h</p>
       </div>
     </div>
-  </div>
+
+    <!-- CURSOS -->
+    <h2 class="subtitulo">Meus Cursos</h2>
+    <div class="cards-cursos">
+      <CardCurso
+        v-for="curso in cursosUnicos"
+        :key="curso.id"
+        :curso="curso"
+      />
+    </div>
+
+    <!-- HISTÓRICO DE AULAS -->
+    <h2 class="subtitulo">Histórico de Aulas Assistidas</h2>
+
+    <div class="lista-aulas">
+      <div v-for="aula in aulasPresente" :key="aula.id" class="aula-item">
+        <h3 class="nome-aula">{{ aula.titulo }}</h3>
+        <p class="curso-nome">{{ aula.nomeCurso }}</p>
+        <p class="data-aula">
+          {{ formatDate(aula.dataInicio) }} — {{ formatDate(aula.dataFinal) }}
+        </p>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '../stores/authStore'
+import { obterUsuario } from '../services/usuarioService'
+import { minhasInscricoes } from '../services/inscricaoService'
+import { listarAulasPresentesPorAluno, obterCargaHorariaPorAluno } from '../services/inscricaoService'
+import CardCurso from '../components/CardCurso.vue'
 
-const router = useRouter()
-const authStore = useAuthStore()
+const auth = useAuthStore()
+const usuario = ref({})
+const inscricoes = ref([])
+const aulasPresente = ref([])
+const cargaHorariaHoras = ref(0)
 
-// Dados de exemplo (futuramente virão da API)
-const aulasDisponiveis = ref([
-  {
-    id: 1,
-    titulo: 'Matemática Básica',
-    descricao: 'Operações fundamentais e resolução de problemas',
-    educador: 'Prof. Maria Silva',
-    dataInicio: '2024-01-25T09:00:00',
-    status: 'Agendada',
-    vagasDisponiveis: 5
-  },
-  {
-    id: 2,
-    titulo: 'Português Avançado',
-    descricao: 'Gramática e produção textual',
-    educador: 'Prof. João Santos',
-    dataInicio: '2024-01-30T14:00:00',
-    status: 'Agendada',
-    vagasDisponiveis: 8
+function formatDate(date) {
+  return new Date(date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })
+}
+
+function extrairCurso(inscricao) {
+  return {
+    id: inscricao.curso?.id ?? inscricao.cursoId,
+    nome: inscricao.curso?.nome ?? inscricao.nomeCurso,
+    descricao: inscricao.curso?.descricao ?? ''
   }
-])
+}
 
-const minhasInscricoes = ref([
-  {
-    id: 1,
-    titulo: 'Alfabetização Básica',
-    educador: 'Prof. Ana Costa',
-    dataInicio: '2024-01-15T10:00:00',
-    dataInscricao: '2024-01-10T15:30:00',
-    status: 'Concluída'
-  },
-  {
-    id: 2,
-    titulo: 'Leitura e Interpretação',
-    educador: 'Prof. Carlos Lima',
-    dataInicio: '2024-01-22T16:00:00',
-    dataInscricao: '2024-01-18T09:15:00',
-    status: 'Agendada'
+const cursosUnicos = computed(() => {
+  const map = new Map()
+  for (const inscr of inscricoes.value) {
+    const curso = extrairCurso(inscr)
+    if (curso.id && !map.has(curso.id)) map.set(curso.id, curso)
   }
-])
-
-function logout() {
-  authStore.logout()
-  router.push('/')
-}
-
-function inscreverSe(aulaId) {
-  // Futura implementação
-  console.log('Inscrever-se na aula:', aulaId)
-}
-
-function verDetalhes(aulaId) {
-  // Futura implementação
-  console.log('Ver detalhes da aula:', aulaId)
-}
-
-function cancelarInscricao(inscricaoId) {
-  // Futura implementação
-  console.log('Cancelar inscrição:', inscricaoId)
-}
-
-function verCertificado(inscricaoId) {
-  // Futura implementação
-  console.log('Ver certificado:', inscricaoId)
-}
-
-function getStatusType(status) {
-  const types = {
-    'Agendada': 'warning',
-    'Concluída': 'success',
-    'Cancelada': 'danger'
-  }
-  return types[status] || 'info'
-}
-
-function formatarData(dataString) {
-  return new Date(dataString).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
-
-onMounted(() => {
-  // Verificar autenticação
-  if (!authStore.isAuthenticated || !authStore.isAluno) {
-    router.push('/login')
-  }
+  return [...map.values()]
 })
+
+async function carregarDashboard() {
+  const alunoId = auth.user.id
+
+  usuario.value = await obterUsuario(alunoId)
+  inscricoes.value = await minhasInscricoes()
+
+  const aulas = await listarAulasPresentesPorAluno(alunoId)
+  aulasPresente.value = aulas.map(a => ({
+    ...a,
+    dataInicio: new Date(a.dataInicio),
+    dataFinal: new Date(a.dataFinal)
+  }))
+
+  const carga = await obterCargaHorariaPorAluno(alunoId)
+  cargaHorariaHoras.value = carga.totalHoras ?? 0
+}
+
+onMounted(() => carregarDashboard())
 </script>
 
 <style scoped>
-.dashboard-aluno {
-  min-height: 100vh;
-  background: var(--color-bg);
-}
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap');
 
-.dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2rem;
-  background: var(--color-bg-container);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.user-info h1 {
-  color: var(--color-deep-matcha);
-  margin: 0;
-}
-
-.role-badge {
-  background: var(--color-redbean);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.dashboard-content {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.aulas-disponiveis-section,
-.minhas-inscricoes-section {
-  margin-bottom: 3rem;
-}
-
-.aulas-disponiveis-section h2,
-.minhas-inscricoes-section h2 {
-  color: var(--color-deep-matcha);
-  margin-bottom: 1.5rem;
-}
-
-.aulas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-}
-
-.inscricoes-lista {
+.dashboard {
+  padding: 50px;
+  font-family: 'Sora', sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  background: var(--cor-bg);
+  gap: 16px;
 }
 
-.aula-card,
-.inscricao-card {
-  border: 2px solid var(--color-border);
-  transition: all 0.3s ease;
+.titulo {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cor-principal);
+  margin-bottom: 25px;
 }
 
-.aula-card:hover,
-.inscricao-card:hover {
-  border-color: var(--color-redbean);
-  transform: translateY(-2px);
-}
-
-.aula-header,
-.inscricao-header {
+/* CARDS DE CIMA */
+.cards-topo {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  gap: 20px;
+  margin-bottom: 40px;
 }
 
-.aula-header h3,
-.inscricao-header h3 {
-  color: var(--color-deep-matcha);
-  margin: 0;
+.card {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  border-left: 6px solid var(--cor-secundaria);
 }
 
-.aula-descricao {
-  color: var(--color-text);
-  margin-bottom: 1rem;
-  line-height: 1.5;
+.card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cor-secundaria);
+  margin-bottom: 10px;
 }
 
-.aula-info,
-.inscricao-info {
-  margin-bottom: 1rem;
+.card p {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--cor-principal);
 }
 
-.aula-info p,
-.inscricao-info p {
-  margin: 0.25rem 0;
-  font-size: 0.9rem;
-  color: var(--color-text);
+/* CURSOS */
+.subtitulo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--cor-secundaria);
+  margin: 30px 0 20px 0;
 }
 
-.aula-actions,
-.inscricao-actions {
+.cards-cursos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+/* HISTÓRICO DE AULAS */
+.lista-aulas {
   display: flex;
-  gap: 0.5rem;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aula-item {
+  background: white;
+  border-radius: 12px;
+  padding: 18px;
+  border-left: 4px solid var(--cor-principal);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.nome-aula {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--cor-principal);
+  margin-bottom: 4px;
+}
+
+.curso-nome {
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+  margin-bottom: 6px;
+}
+
+.data-aula {
+  color: var(--cor-secundaria);
+  font-weight: 500;
 }
 </style>

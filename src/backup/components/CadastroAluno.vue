@@ -88,14 +88,12 @@ async function onSubmit() {
   loading.value = true
   try {
     const payload = {
-      alunoCadastro: {
-        nome: form.nome,
-        email: form.email,
-        telefone: form.telefone,
-        descricao: form.descricao,
-        senha: form.senha,
-        confirmarSenha: form.confirmarSenha
-      }
+      nome: form.nome,
+      email: form.email,
+      telefone: form.telefone,
+      descricao: form.descricao,
+      senha: form.senha,
+      confirmarSenha: form.confirmarSenha
     }
     const res = await cadastrarAluno(payload)
     success.value = 'Cadastro realizado com sucesso.'

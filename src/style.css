@@ -1,110 +1,34 @@
 :root {
-  --color-bg: #f7f5f2;
-  --color-text: #4a4a4a;
-  --color-matcha: #a4c3a2;
-  --color-redbean: #b56e6b;
-  --color-deep-matcha: #6b8e6b;
-  --color-border: #dcdad5;
-  --color-bg-container: #FCFBF8;
-  --el-color-primary: #a4c3a2;
+  --cor-bg: white;
+  --cor-bg-2: #E9E9E9;
+  --cor-principal: #14314E;
+  --cor-secundaria: #7ab46f; 
+  --cor-alerta: #ff0000;
 
-  --font-main: 'Poppins', sans-serif;
+  --gradiente-principal: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+  --gradiente-alerta: linear-gradient(135deg, #ff0000, #ffd000);
 
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
-  --space-md: 2rem;
-  --space-lg: 4rem;
+  --sombra: 0 0 64px rgba(0,0,0,0.07);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.sora-big-freaking-text {
+  font-family: "Sora", sans-serif;
+  font-weight: bold;
+  font-size: 32px;
+  color: var(--cor-principal);
 }
 
-main {
-  padding: 2rem;
+.sora-section-title {
+  font-family: "Sora", sans-serif;
+  font-weight: medium;
+  font-size: 32px;
+  color: var(--cor-principal);
+  margin-bottom: 32px;
 }
 
-body {
-  font-family: var(--font-main);
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow-y: scroll;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-header, footer {
-  background: var(--color-bg-container);
-  border-color: var(--color-border);
-  border-style: solid;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-
-header {
-  border-width: 0 0 1px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-sm) var(--space-md);
-}
-
-main {
-  flex: 1; 
-}
-
-footer {
-  border-width: 1px 0 0 0;
-  text-align: center;
-  padding: var(--space-md);
-  color: #777;
-  margin-top: auto;
-}
-
-button {
-  font-family: inherit;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  padding: var(--space-xs) var(--space-md);
-  transition: 0.2s;
-}
-
-.btn-primary {
-  background: var(--color-matcha);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--color-deep-matcha);
-}
-
-.btn-secondary {
-  background: var(--color-redbean);
-  color: white;
-}
-
-.btn-secondary:hover {
-  background: #9f5c58;
-}
-
-.container {
-  width: 90%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: var(--space-md) 0;
-}
-
-.text-center {
-  text-align: center;
+.sora-card-main {
+  font-family: "Sora", sans-serif;
+  font-weight: medium;
+  font-size: 25px;
+  color: var(--cor-principal);
 }
